@@ -2,7 +2,7 @@ import SenseLock from "../src/SenseLock.js";
 import { SET_LOCK_CONFIG } from "../src/ble/schlage/Constants.js";
 
 if(process.argv.length < 3 || +process.argv[2] < 4 || +process.argv[2] > 8) {
-	throw new Error("Usage: node --env-file=.env.FRONT_DOOR scripts/setAccessCodeLength.js 6");
+	throw new Error("Usage: node --env-file=.env.FRONT_DOOR examples/setAccessCodeLength.js 6");
 }
 
 // Find the lock

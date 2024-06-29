@@ -10,7 +10,7 @@ Control Schlage Sense Smart Locks via Web Bluetooth
 3. Enter ```[code]0``` (e.g. if your code is "123456", enter "1234560") on the keypad, and wait for the solid orange light.
 4. Run the following command:
 
-```node scripts/pair.js [code] > .env.FRONT_DOOR```
+```node examples/pair.js [code] > .env.FRONT_DOOR```
 
 If all goes well, you should see output resembling the following:
 
@@ -41,28 +41,28 @@ Note: If you see ```Request error: 145``` or ```Timed out```, just start over. T
 
 ### Lock the deadbolt
 
-```node --env-file=.env.FRONT_DOOR scripts/lock.js```
+```node --env-file=.env.FRONT_DOOR examples/lock.js```
 
 ### Unlock the deadbolt
 
-```node --env-file=.env.FRONT_DOOR scripts/unlock.js```
+```node --env-file=.env.FRONT_DOOR examples/unlock.js```
 
 ### Set access code length
 
-```node --env-file=.env.FRONT_DOOR scripts/setAccessCodeLength.js 6```
+```node --env-file=.env.FRONT_DOOR examples/setAccessCodeLength.js 6```
 
 ### Get access code length
 
-```node --env-file=.env.FRONT_DOOR scripts/getAccessCodeLength.js```
+```node --env-file=.env.FRONT_DOOR examples/getAccessCodeLength.js```
 
 ### Add access code
 
-```node --env-file=.env.FRONT_DOOR scripts/addAccessCode.js 123456```
+```node --env-file=.env.FRONT_DOOR examples/addAccessCode.js 123456```
 
 ### Delete access code
 
-```node --env-file=.env.FRONT_DOOR scripts/deleteAccessCode.js 123456```
+```node --env-file=.env.FRONT_DOOR examples/deleteAccessCode.js 123456```
 
 ### Get access codes
 
-```node --env-file=.env.FRONT_DOOR scripts/getAccessCodes.js```
+```node --env-file=.env.FRONT_DOOR examples/getAccessCodes.js```

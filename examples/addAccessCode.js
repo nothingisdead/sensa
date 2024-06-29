@@ -2,7 +2,7 @@ import SenseLock from "../src/SenseLock.js";
 import AccessCode from "../src/AccessCode.js";
 
 if(process.argv.length < 3 || !process.argv[2].match(/^\d{4,8}$/)) {
-	throw new Error("Usage: node --env-file=.env.FRONT_DOOR scripts/addAccessCode.js 123456");
+	throw new Error("Usage: node --env-file=.env.FRONT_DOOR examples/addAccessCode.js 123456");
 }
 
 // Find the lock

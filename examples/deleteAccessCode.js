@@ -1,7 +1,7 @@
 import SenseLock from "../src/SenseLock.js";
 
 if(process.argv.length < 3 || !process.argv[2].match(/^\d{4,8}$/)) {
-	throw new Error("Usage: node --env-file=.env.FRONT_DOOR scripts/deleteAccessCode.js 123456");
+	throw new Error("Usage: node --env-file=.env.FRONT_DOOR examples/deleteAccessCode.js 123456");
 }
 
 // Find the lock

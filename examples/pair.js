@@ -1,7 +1,7 @@
 import SenseLock from "../src/SenseLock.js";
 
 if(process.argv.length < 3) {
-	throw new Error("Usage: node scripts/pair.js 123456 > .env.FRONT_DOOR");
+	throw new Error("Usage: node examples/pair.js 123456 > .env.FRONT_DOOR");
 }
 
 const pin  = +process.argv[2];
