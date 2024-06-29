@@ -1,3 +1,6 @@
+# Lock credentials created by README commands
+.env.*
+
 # Logs
 logs
 *.log

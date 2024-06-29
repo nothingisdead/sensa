@@ -1,0 +1,66 @@
+const GET_LOCK_INFO = {
+	MANUFACTURER     : 2,
+	MODEL            : 3,
+	SERIAL_NUMBER    : 4,
+	FIRMWARE_VERSION : 5,
+	TIMESTAMP        : 7,
+	BATTERY_LEVEL    : 12,
+};
+
+const GET_LOCK_CONFIG = {
+	KEYPRESS_BEEPER    : 3,
+	AUTO_LOCK_DELAY    : 5,
+	ALARM_MODE         : 9,
+	ALARM_SENSITIVITY  : 11,   // 1 = most sensitive, 5 = least sensitive
+	ONE_TOUCH_LOCKING  : 13,
+	ACCESS_CODE_LENGTH : 15,
+	TIMEZONE_OFFSET    : 21,
+};
+
+const SET_LOCK_CONFIG = {
+	KEYPRESS_BEEPER    : 2,
+	AUTO_LOCK_DELAY    : 4,
+	ALARM_MODE         : 8,
+	ALARM_SENSITIVITY  : 10,   // 1 = most sensitive, 5 = least sensitive
+	ONE_TOUCH_LOCKING  : 12,
+	ACCESS_CODE_LENGTH : 14,
+	TIMEZONE_OFFSET    : 20,
+};
+
+const SET_LOCK_STATE = {
+	SECURED   : 0,
+	TIMESTAMP : 6,
+};
+
+const SECURED_STATES = {
+	INVALID   : -1,
+	UNSECURED : 0,
+	SECURED   : 1,
+	JAMMED    : 2,
+	UNKNOWN   : 3,
+};
+
+const BATTERY_STATES = {
+	UNKNOWN  : -1,
+	NORMAL   : 0,
+	LOW      : 1,
+	CRITICAL : 2,
+};
+
+const ALARM_MODES = {
+	INVALID      : -1,
+	DISABLED     : 0,
+	LOCK_UNLOCK  : 1,
+	TAMPER       : 2,
+	FORCED_ENTRY : 3,
+};
+
+export {
+	GET_LOCK_INFO,
+	GET_LOCK_CONFIG,
+	SET_LOCK_CONFIG,
+	SET_LOCK_STATE,
+	SECURED_STATES,
+	BATTERY_STATES,
+	ALARM_MODES,
+};
