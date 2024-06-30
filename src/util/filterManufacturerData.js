@@ -1,3 +1,4 @@
+import { encode } from "@stablelib/hex";
 /**
  * Utility function to filter bluetooth manufacturer data
  * @param {Uint8Array} data

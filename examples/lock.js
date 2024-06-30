@@ -5,7 +5,7 @@ import { SET_LOCK_STATE } from "../src/ble/schlage/Constants.js";
 const state = process.argv[1].endsWith('unlock.js') ? 0 : 1;
 
 // Find the lock
-const lock = await SenseLock.find(true, process.env.NAME ?? null);
+const lock = await SenseLock.find(true, process.env.MAC_ADDRESS ?? null);
 
 // Authorize the session
 if(process.env.CAT && process.env.SAT) {

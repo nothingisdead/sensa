@@ -5,7 +5,7 @@ if(process.argv.length < 3 || !process.argv[2].match(/^\d{4,8}$/)) {
 }
 
 // Find the lock
-const lock = await SenseLock.find(true, process.env.NAME ?? null);
+const lock = await SenseLock.find(true, process.env.MAC_ADDRESS ?? null);
 
 // Authorize the session
 if(process.env.CAT && process.env.SAT) {

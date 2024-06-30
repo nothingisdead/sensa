@@ -61,9 +61,11 @@ const INSECURE_CONNECTION_PREFIX = new Uint8Array([ 0, 1, 0, 20, 0 ]);
 const SEPARATOR_BYTE             = 20;
 const MESSAGE_TYPE_MASK          = 0x0f;
 const DEFAULT_TIMEOUT            = 1000 * 10;
+const MAC_ADDRESS_OFFSET         = 7;
 
 export default class SenseLock extends EventEmitter {
 	#device;
+	#address;
 	#service;
 	#rx_char;
 	#tx_char;
@@ -80,13 +82,15 @@ export default class SenseLock extends EventEmitter {
 
 	/**
 	 * Create an object that represents a BLE lock device
-	 * @param {BluetoothDevice} device The underlying BluetoothDevice object
+	 * @param {BluetoothDevice} device  The underlying BluetoothDevice object
+	 * @param {Uint8Array}      address The device MAC address
 	 */
-	constructor(device) {
+	constructor(device, address) {
 		super();
 
-		// Store the bluetooth device
-		this.#device = device;
+		// Store the bluetooth device and address
+		this.#device  = device;
+		this.#address = address;
 
 		// When the GATT servcer disconnects, reset some internal state
 		device.addEventListener('gattserverdisconnected', () => {
@@ -121,6 +125,11 @@ export default class SenseLock extends EventEmitter {
 	// Returns the underlying BluetoothDevice
 	get device() {
 		return this.#device;
+	}
+
+	// Returns the MAC address of the underlying BluetoothDevice
+	get address() {
+		return toHex(this.#address);
 	}
 
 	// Returns true if the device is currently authorized
@@ -992,30 +1001,37 @@ export default class SenseLock extends EventEmitter {
 
 	/**
 	 * Find Schlage Sense locks
-	 * @param   {Boolean}            paired  Pass true/false to limit to paired/unpaired locks
-	 * @param   {String}             name    Search for locks with the given name
-	 * @returns {Promise<SenseLock>}         The found lock
+	 * @param   {Boolean}              paired  Pass true/false to limit to paired/unpaired locks
+	 * @param   {(Uint8Array|String)?} address Search for locks with the given MAC address
+	 * @returns {Promise<SenseLock>}           The found lock
 	 */
-	static async find(paired = null, name = null) {
-		// Get the device
-		const device = await this.#getDevice(paired, name);
+	static async find(paired = null, address = null) {
+		while(true) {
+			try {
+				// Get the device
+				const { device, address : tmp_address } = await this.#getDevice(paired, address);
 
-		// Connect to the GATT server
-		await device.gatt.connect();
+				// Connect to the GATT server
+				await device.gatt.connect();
 
-		// Create a SenseLock object
-		return new SenseLock(device);
+				// Create a SenseLock object
+				return new SenseLock(device, tmp_address);
+			}
+			catch(e) {
+				console.warn(e);
+			}
+		}
 	}
 
 	/**
 	 * Find Schlage Sense bluetooth devices
-	 * @param   {Boolean}            paired  Pass true/false to limit to paired/unpaired locks
-	 * @param   {String}             name    Search for locks with the given name
-	 * @returns {Promise<SenseLock>}         The found lock
+	 * @param   {Boolean}              paired  Pass true/false to limit to paired/unpaired locks
+	 * @param   {(Uint8Array|String)?} address Search for locks with the given MAC address
+	 * @returns {Promise<Object>}              An object with keys 'device' and 'address'
 	 */
-	static async #getDevice(paired = null, name = null) {
+	static async #getDevice(paired = null, address = null) {
 		// Get the scanning filter
-		const filter = getSenseScanFilter(paired, name);
+		const filter = getSenseScanFilter(paired, address);
 
 		// Special handling for NodeJS as scanning with the current webbluetooth/SimpleBLE version is very buggy
 		if(typeof window === 'undefined') {
@@ -1023,7 +1039,7 @@ export default class SenseLock extends EventEmitter {
 			const company_id_str = COMPANY_ID.toString();
 
 			const bluetooth = new Bluetooth({
-				scanTime        : 10,
+				scanTime        : 30,
 				allowAllDevices : true,
 
 				deviceFound : (device) => {
@@ -1047,13 +1063,23 @@ export default class SenseLock extends EventEmitter {
 				},
 			});
 
-			return await bluetooth.requestDevice({
+			const device = await bluetooth.requestDevice({
 				acceptAllDevices : true,
 				optionalServices : [ SERVICE_UUID ],
 			});
-		}
 
-		return await navigator.bluetooth.requestDevice({ filters : [ filter ]});
+			const mfr     = device._adData.manufacturerData.get(company_id_str);
+			const address = (new Uint8Array(mfr.buffer, mfr.byteOffset, mfr.byteLength)).slice(MAC_ADDRESS_OFFSET, MAC_ADDRESS_OFFSET + 6);
+
+			return { device, address };
+		}
+		else {
+			// TODO: implement address for Chrome
+			const device  = await navigator.bluetooth.requestDevice({ filters : [ filter ]});
+			const address = new Uint8Array(6);
+
+			return { device, address };
+		}
 	}
 
 	/**

@@ -1,13 +1,18 @@
-import { decode as fromHex } from "@stablelib/hex";
+import { decode as fromHex, encode as toHex } from "@stablelib/hex";
 import { COMPANY_ID, SERVICE_UUID } from '../SenseLock.js';
 
 /**
  * Get a WebBluetooth scan filter for a Schlage Sense lock
- * @param   {Boolean?} paired
- * @param   {String?}  name
+ * @param   {Boolean?}             paired  Filter for paired/unpaired devices
+ * @param   {(Uint8Array|String)?} address The device MAC address
  * @returns {Object}
  */
-export default function getSenseScanFilter(paired = null, name = null) {
+export default function getSenseScanFilter(paired = null, address = null) {
+	// Convert Uint8Array MAC addresses to hex strings
+	if(address instanceof Uint8Array) {
+		address = toHex(address);
+	}
+
 	const mfr = {
 		companyIdentifier : COMPANY_ID,
 	};
@@ -17,20 +22,17 @@ export default function getSenseScanFilter(paired = null, name = null) {
 		manufacturerData : [ mfr ],
 	};
 
-	// If the "paired" filter is set, filter by device state
-	if(paired !== null) {
-		const paired_mask    = (paired === false ? '0' : 'f').repeat(2);
-		const paired_prefix  = paired === false ? '00' : (paired ? '02' : '01');
+	// Add filters
+	if(paired !== null || address !== null) {
+		const paired_mask    = paired  === null ? '00' : 'ff';
+		const paired_prefix  = paired  === null ? '00' : (paired ? '02' : '01');
+		const address_mask   = address === null ? '000000000000' : 'ffffffffffff';
+		const address_prefix = address === null ? '000000000000' : address;
 
 		Object.assign(mfr, {
-			dataPrefix : fromHex(`000000${paired_prefix}`),
-			mask       : fromHex(`000000${paired_mask}`),
+			dataPrefix : fromHex(`000000${paired_prefix}000000${address_prefix}`),
+			mask       : fromHex(`000000${paired_mask}000000${address_mask}`),
 		});
-	}
-
-	// If the "name" filter is set, filter by name
-	if(name !== null) {
-		Object.assign(filter, { name });
 	}
 
 	return filter;

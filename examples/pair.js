@@ -13,7 +13,7 @@ try {
 
 	const { cat, sat } = await lock.pair(pin);
 
-	console.log(`CAT=${cat}\nSAT=${sat}\nNAME=${lock.device.name}`);
+	console.log(`CAT=${cat}\nSAT=${sat}\nMAC_ADDRESS=${lock.address}`);
 }
 finally {
 	if(lock.connected) {
